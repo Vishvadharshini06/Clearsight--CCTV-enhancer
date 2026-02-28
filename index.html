@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClearSight— Evidence-Grade CCTV Enhancement</title>
+  <link rel="stylesheet" href="static/css/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- SCANLINE + GRID are handled via CSS pseudo-elements on body -->
+
+  <div class="container">
+
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="header-inner">
+        <div class="logo-mark">
+          <span class="logo-icon">🔍</span>
+        </div>
+        <div class="header-text">
+          <h1>Clear<span>Sight</span></h1>
+          <p>Evidence-Grade CCTV Enhancement System // AI-Powered Super-Resolution</p>
+        </div>
+        <div class="status-bar">
+          <div class="status-pill"><span class="dot"></span> SYSTEM ONLINE</div>
+          <div class="status-pill divider">RealESRGAN · AOD-Net · CLAHE</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── PIPELINE STRIP ── -->
+    <div class="pipeline-strip" id="pipelineStrip">
+      <div class="pipe-step"><div class="pipe-label" data-step="0">GATEKEEPER ANALYSIS</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="1">DEGRADATION CLASSIFICATION</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="2">TEMPORAL FUSION SR</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="3">DOMAIN ENHANCEMENT</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="4">ESRGAN 4× UPSCALE</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="5">FIDELITY GUARD</div></div>
+      <div class="pipe-step"><span class="pipe-arrow">▶</span><div class="pipe-label" data-step="6">EVIDENCE LOG</div></div>
+    </div>
+
+    <!-- ── MAIN GRID ── -->
+    <div class="main-grid">
+
+      <!-- INPUT PANEL -->
+      <div class="panel" id="inputPanel">
+        <div class="panel-header">
+          <span class="panel-title">// INPUT FRAME</span>
+          <span class="panel-tag cyan">CHANNEL 01</span>
+        </div>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept="image/*">
+          <div class="drop-icon">📷</div>
+          <div class="drop-title">DROP CCTV FRAME</div>
+          <div class="drop-sub">
+            DRAG & DROP OR CLICK TO BROWSE<br>
+            PNG · JPG · WEBP · BMP · TIFF
+          </div>
+          <button class="browse-btn" id="browseBtn">[ SELECT FILE ]</button>
+        </div>
+        <div class="preview-wrap" id="inputPreview" style="display:none;">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <img id="inputImg" class="preview-img" alt="Input frame">
+        </div>
+      </div>
+
+      <!-- CONTROLS PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">// ENHANCEMENT PARAMETERS</span>
+          <span class="panel-tag orange">CONFIG</span>
+        </div>
+        <div class="controls-body">
+
+          <div class="controls-row">
+            <div class="ctrl-group">
+              <span class="ctrl-label">Enhancement Mode</span>
+              <select class="ctrl-select" id="modeSelect">
+                <option value="auto">AUTO-DETECT</option>
+                <option value="night">NIGHT / LOW-LIGHT</option>
+                <option value="fog">FOG / HAZE</option>
+                <option value="blur">MOTION BLUR</option>
+                <option value="rain">RAIN / WEATHER</option>
+                <option value="clear">STANDARD SR</option>
+              </select>
+            </div>
+            <div class="ctrl-group">
+              <span class="ctrl-label">Upscale Factor</span>
+              <select class="ctrl-select" id="scaleSelect">
+                <option value="4">4× SUPER-RESOLUTION</option>
+                <option value="2">2× UPSCALE</option>
+                <option value="1">ORIGINAL SIZE</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls-row">
+            <div class="ctrl-group">
+              <span class="ctrl-label">Analysis Depth</span>
+              <select class="ctrl-select" id="depthSelect">
+                <option value="full">FULL PIPELINE (ALL MODULES)</option>
+                <option value="fast">FAST MODE (SR ONLY)</option>
+              </select>
+            </div>
+            <div class="ctrl-group">
+              <span class="ctrl-label">Output Quality</span>
+              <select class="ctrl-select" id="qualitySelect">
+                <option value="evidence">EVIDENCE-GRADE (MAX)</option>
+                <option value="high">HIGH QUALITY</option>
+                <option value="balanced">BALANCED</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls-row toggles-row">
+            <div class="ctrl-toggle" id="toggleFidelity">
+              <div class="toggle-box checked" id="fidelityBox"></div>
+              <span class="toggle-text">FIDELITY GUARD (VGG-16)</span>
+            </div>
+            <div class="ctrl-toggle" id="toggleClahe">
+              <div class="toggle-box checked" id="claheBox"></div>
+              <span class="toggle-text">CLAHE NORMALIZATION</span>
+            </div>
+            <div class="ctrl-toggle" id="toggleDenoise">
+              <div class="toggle-box checked" id="denoiseBox"></div>
+              <span class="toggle-text">DENOISING PASS</span>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <button class="enhance-btn" id="enhanceBtn" disabled>
+            ⚡ INITIATE ENHANCEMENT PIPELINE
+          </button>
+
+          <!-- Log -->
+          <div class="log-section">
+            <div class="log-header">// SYSTEM LOG</div>
+            <div class="analysis-log" id="analysisLog">
+              <div class="log-line">
+                <span class="log-ts">00:00:00</span>
+                <span class="log-msg">ClearSight v4 initialized — awaiting input frame</span>
+              </div>
+              <div class="log-line">
+                <span class="log-ts">00:00:00</span>
+                <span class="log-msg">Pipeline: Gatekeeper · DehazeKernel · ESRGANEnhancer · FidelityGuard</span>
+              </div>
+              <div class="log-line">
+                <span class="log-ts">00:00:00</span>
+                <span class="log-msg accent">Ready — drop a CCTV frame to begin.</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /controls-body -->
+      </div><!-- /controls panel -->
+
+    </div><!-- /main-grid -->
+
+    <!-- ── METRICS BAR ── -->
+    <div class="metrics-bar" id="metricsBar" style="display:none;">
+      <div class="metric-cell">
+        <div class="metric-val" id="m-psnr">—</div>
+        <div class="metric-key">PSNR (dB) ↑</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val green" id="m-ssim">—</div>
+        <div class="metric-key">SSIM ↑</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val orange" id="m-mode">—</div>
+        <div class="metric-key">DEGRADATION TYPE</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-val" id="m-fidelity">—</div>
+        <div class="metric-key">FIDELITY SCORE</div>
+      </div>
+    </div>
+
+    <!-- ── OUTPUT SECTION ── -->
+    <div id="outputSection">
+
+      <!-- Empty state -->
+      <div class="panel" id="emptyOutput">
+        <div class="empty-output">
+          <div class="empty-icon">📺</div>
+          AWAITING FRAME PROCESSING<br>
+          UPLOAD AN IMAGE AND INITIATE THE PIPELINE TO VIEW RESULTS
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsOutput" style="display:none;">
+        <div class="output-grid">
+
+          <!-- Compare slider -->
+          <div class="panel lit">
+            <div class="panel-header">
+              <span class="panel-title">// BEFORE / AFTER COMPARISON</span>
+              <span class="panel-tag cyan">SLIDER</span>
+            </div>
+            <div class="compare-wrap">
+              <div class="compare-container" id="compareContainer">
+                <img id="compareOrigImg" alt="Original">
+                <div class="compare-enhanced" id="compareEnhanced">
+                  <img id="compareEnhImg" alt="Enhanced">
+                </div>
+                <div class="compare-line" id="compareLine">
+                  <div class="compare-handle">◀▶</div>
+                </div>
+                <span class="compare-label orig">ORIGINAL</span>
+                <span class="compare-label enh">ENHANCED</span>
+              </div>
+              <div class="compare-hint">← DRAG TO COMPARE →</div>
+            </div>
+          </div>
+
+          <!-- Enhanced output -->
+          <div class="panel lit">
+            <div class="panel-header">
+              <span class="panel-title">// ENHANCED OUTPUT</span>
+              <span class="panel-tag green">4× SR</span>
+            </div>
+            <div class="preview-wrap" style="min-height: 300px;">
+              <div class="corner tl"></div>
+              <div class="corner tr"></div>
+              <div class="corner bl"></div>
+              <div class="corner br"></div>
+              <img id="outputImg" class="preview-img" alt="Enhanced output">
+            </div>
+          </div>
+
+        </div><!-- /output-grid -->
+
+        <!-- Download row -->
+        <div class="download-row">
+          <a class="dl-btn primary" id="dlEnhanced" download="clearsight_enhanced.png">⬇ DOWNLOAD ENHANCED IMAGE</a>
+          <button class="dl-btn" id="dlReport">⬇ EXPORT EVIDENCE REPORT</button>
+          <button class="dl-btn" id="resetBtn">↺ PROCESS NEW FRAME</button>
+        </div>
+
+      </div><!-- /resultsOutput -->
+    </div><!-- /outputSection -->
+
+  </div><!-- /container -->
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-ring"></div>
+    <div class="loading-text" id="loadingText">INITIALIZING PIPELINE...</div>
+    <div class="loading-steps" id="loadingSteps"></div>
+  </div>
+
+  <script src="static/js/pipeline.js"></script>
+  <script src="static/js/ui.js"></script>
+  <script src="static/js/app.js"></script>
+</body>
+</html>
