@@ -19,6 +19,7 @@ clearsight-v4/
         ├── pipeline.js         ← Image processing algorithms (pure JS)
         ├── ui.js               ← UI controllers (Logger, Slider, Toggles…)
         └── app.js              ← App entry point, wires everything together
+├── clearsight_kaggle.py        ← Model pipeline python file
 ```
 
 ---
