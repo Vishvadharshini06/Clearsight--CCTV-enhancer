@@ -609,7 +609,7 @@ header {
 }
 
 /* ════════════════════════════════════════════════════════════
-   COMPARE SLIDER
+   COMPARE SLIDER — FIXED
    ════════════════════════════════════════════════════════════ */
 .compare-wrap { padding: 12px; }
 
@@ -621,35 +621,47 @@ header {
   user-select: none;
 }
 
+/* BASE (original) image — full width, sets the height */
 .compare-container > img {
   display: block;
   width: 100%;
+  height: auto;
   max-height: 360px;
-  object-fit: contain;
+  object-fit: cover;   /* ← cover keeps aspect ratio + fills space */
 }
 
+/* OVERLAY (enhanced) — clips from the left */
 .compare-enhanced {
   position: absolute;
-  top: 0; left: 0;
-  width: 50%;
+  top: 0;
+  left: 0;
+  height: 100%;          /* ← must fill full height */
+  width: 50%;            /* controlled by JS */
   overflow: hidden;
 }
 
+/* Enhanced image must be as wide as the CONTAINER, not the overlay */
 .compare-enhanced img {
   display: block;
-  width: 100%;
+  width: var(--container-width, 100%); /* set via JS, or use a fixed approach below */
+  height: auto;
   max-height: 360px;
-  object-fit: contain;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .compare-line {
   position: absolute;
-  top: 0; bottom: 0;
+  top: 0;
+  bottom: 0;
   left: 50%;
   width: 2px;
   background: var(--accent);
   cursor: col-resize;
   z-index: 10;
+  transform: translateX(-50%);
 }
 
 .compare-handle {
@@ -669,6 +681,7 @@ header {
   font-weight: bold;
   box-shadow: 0 0 20px rgba(0,229,255,0.5);
   pointer-events: none;
+  white-space: nowrap;
 }
 
 .compare-label {
@@ -678,6 +691,7 @@ header {
   font-size: 0.58rem;
   padding: 3px 8px;
   letter-spacing: 0.1em;
+  z-index: 5;
 }
 .compare-label.orig {
   right: 10px;
@@ -699,7 +713,6 @@ header {
   font-size: 0.58rem;
   color: var(--dim);
 }
-
 /* ════════════════════════════════════════════════════════════
    DOWNLOAD ROW
    ════════════════════════════════════════════════════════════ */
