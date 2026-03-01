@@ -163,8 +163,20 @@ const CompareSlider = {
 
   _setPos(pct) {
     this._pos = Math.max(2, Math.min(98, pct));
+
+    // Clip overlay width
     this._enhanced.style.width = this._pos + '%';
-    this._line.style.left      = this._pos + '%';
+
+    // ✅ FIX: Keep inner image pinned to full container width
+    // so it doesn't shrink as the clip gets smaller
+    const containerW = this._container.getBoundingClientRect().width;
+    this._enhImg.style.width    = containerW + 'px';
+    this._enhImg.style.position = 'absolute';
+    this._enhImg.style.top      = '0';
+    this._enhImg.style.left     = '0';
+
+    // Move divider line
+    this._line.style.left = this._pos + '%';
   },
 
   _getPos(e) {
@@ -191,9 +203,13 @@ const CompareSlider = {
       if (this._dragging) this._setPos(this._getPos(e));
     }, { passive: true });
     document.addEventListener('touchend', () => { this._dragging = false; });
+
+    // ✅ FIX: Re-apply on window resize so image width stays correct
+    window.addEventListener('resize', () => {
+      this._setPos(this._pos);
+    });
   },
 };
-
 
 /* ═══════════════════════════════════════════════════════════
    METRICS DISPLAY
